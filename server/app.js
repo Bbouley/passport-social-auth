@@ -1,4 +1,5 @@
 // *** main dependencies *** //
+require('./models/users.js');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -6,6 +7,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var swig = require('swig');
+// var config = require('../_config.js');
+var passport = require('passport');
+var session = require('express-session');
+var mongoose = require('mongoose');
 
 
 // *** routes *** //
@@ -15,6 +20,8 @@ var routes = require('./routes/index.js');
 // *** express instance *** //
 var app = express();
 
+// mongoose //
+mongoose.connect('mongodb://localhost/social-auth');
 
 // *** view engine *** //
 var swig = new swig.Swig();
@@ -32,6 +39,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../client/public')));
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 // *** main routes *** //
